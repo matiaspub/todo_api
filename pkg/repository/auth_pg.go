@@ -23,3 +23,10 @@ func (a *AuthPg) CreateUser(user entity.User) (int, error) {
 	}
 	return id, nil
 }
+
+func (a *AuthPg) GetUser(username string, password string) (entity.User, error) {
+	var user entity.User
+	query := fmt.Sprintf("SELECT * FROM users WHERE username = $1 AND password_hash = $2")
+	err := a.db.Get(&user, query, username, password)
+	return user, err
+}
