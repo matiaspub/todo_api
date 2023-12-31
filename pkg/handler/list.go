@@ -4,13 +4,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/matiaspub/todo-api/pkg/entity"
 	"net/http"
-	"strconv"
 )
 
 func (h *Handler) createList(c *gin.Context) {
-	userId := c.GetInt(userCtx)
-	if userId == 0 {
-		NewErrorResponse(c, http.StatusInternalServerError, "user id not found")
+	userId, done := currentUserId(c)
+	if done {
 		return
 	}
 
@@ -33,9 +31,8 @@ type getAllListsResp struct {
 }
 
 func (h *Handler) getAllLists(c *gin.Context) {
-	userId := c.GetInt(userCtx)
-	if userId == 0 {
-		NewErrorResponse(c, http.StatusInternalServerError, "user id not found")
+	userId, done := currentUserId(c)
+	if done {
 		return
 	}
 
@@ -51,15 +48,13 @@ func (h *Handler) getAllLists(c *gin.Context) {
 }
 
 func (h *Handler) getList(c *gin.Context) {
-	userId := c.GetInt(userCtx)
-	if userId == 0 {
-		NewErrorResponse(c, http.StatusInternalServerError, "user id not found")
+	userId, done := currentUserId(c)
+	if done {
 		return
 	}
 
-	listId, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		NewErrorResponse(c, http.StatusBadRequest, "invalid id param")
+	listId, done2 := getParamInt(c, "id")
+	if done2 {
 		return
 	}
 
@@ -72,9 +67,46 @@ func (h *Handler) getList(c *gin.Context) {
 }
 
 func (h *Handler) updateList(c *gin.Context) {
+	userId, done := currentUserId(c)
+	if done {
+		return
+	}
 
+	listId, done2 := getParamInt(c, "id")
+	if done2 {
+		return
+	}
+
+	var todoList entity.UpdateListInput
+	if err := c.BindJSON(todoList); err != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	err := h.services.TodoList.Update(userId, listId, todoList)
+	if err != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.AbortWithStatus(http.StatusNoContent)
 }
 
 func (h *Handler) deleteList(c *gin.Context) {
+	userId, done := currentUserId(c)
+	if done {
+		return
+	}
 
+	listId, done2 := getParamInt(c, "id")
+	if done2 {
+		return
+	}
+
+	err := h.services.TodoList.Delete(userId, listId)
+	if err != nil {
+		NewErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.AbortWithStatus(http.StatusNoContent)
 }

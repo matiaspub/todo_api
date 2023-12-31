@@ -3,6 +3,8 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/matiaspub/todo-api/pkg/service"
+	"net/http"
+	"strconv"
 )
 
 type Handler struct {
@@ -45,4 +47,22 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	}
 
 	return router
+}
+
+func getParamInt(c *gin.Context, paramName string) (int, bool) {
+	listId, err := strconv.Atoi(c.Param(paramName))
+	if err != nil {
+		NewErrorResponse(c, http.StatusBadRequest, "invalid "+paramName+" param")
+		return 0, true
+	}
+	return listId, false
+}
+
+func currentUserId(c *gin.Context) (int, bool) {
+	userId := c.GetInt(userCtx)
+	if userId == 0 {
+		NewErrorResponse(c, http.StatusInternalServerError, "user id not found")
+		return 0, true
+	}
+	return userId, false
 }

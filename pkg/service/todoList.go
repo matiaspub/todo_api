@@ -26,3 +26,14 @@ func (s *TodoListService) GetAll(userId int) ([]entity.TodoList, error) {
 func (s *TodoListService) GetOne(userId int, listId int) (entity.TodoList, error) {
 	return s.repo.GetOne(userId, listId)
 }
+
+func (s *TodoListService) Delete(userId int, listId int) error {
+	return s.repo.Delete(userId, listId)
+}
+
+func (s *TodoListService) Update(userId int, listId int, list entity.UpdateListInput) error {
+	if err := list.Validate(); err != nil {
+		return err
+	}
+	return s.repo.Update(userId, listId, list)
+}
