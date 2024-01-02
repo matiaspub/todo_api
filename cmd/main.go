@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/joho/godotenv"
 	"github.com/matiaspub/todo-api"
+	_ "github.com/matiaspub/todo-api/docs"
 	"github.com/matiaspub/todo-api/pkg/handler"
 	"github.com/matiaspub/todo-api/pkg/repository"
 	"github.com/matiaspub/todo-api/pkg/service"
@@ -11,6 +12,14 @@ import (
 	"os"
 )
 
+// @title Todo App API
+// @version 1.0
+// @description API Server for TodoList Application
+// @host localhost:8080
+// @BasePath /
+// @securityDefinitions.apiKey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	//logrus.SetFormatter(new(logrus.JSONFormatter))
 	if err := initConfig(); err != nil {

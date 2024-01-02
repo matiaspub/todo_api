@@ -6,6 +6,18 @@ import (
 	"net/http"
 )
 
+// @Summary Create Todo List
+// @Tags lists
+// @Description create todo list
+// @Accept json
+// @Produce json
+// @Param input body entity.TodoList true "list info"
+// @Success 200 {integer} 1
+// @Failure 400,404 {object} Error
+// @Failure 500 {object} Error
+// @Failure default {object} Error
+// @Security ApiKeyAuth
+// @Router /api/list [post]
 func (h *Handler) createList(c *gin.Context) {
 	userId, done := currentUserId(c)
 	if done {
