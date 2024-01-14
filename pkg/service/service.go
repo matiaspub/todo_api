@@ -5,6 +5,8 @@ import (
 	"github.com/matiaspub/todo-api/pkg/repository"
 )
 
+//go:generate mockgen -source=service.go -destination=mocks/mock.go
+
 type Authorization interface {
 	CreateUser(user entity.User) (int, error)
 	GenerateToken(username string, password string) (string, error)

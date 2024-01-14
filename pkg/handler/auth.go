@@ -22,6 +22,7 @@ func (h *Handler) signUp(c *gin.Context) {
 
 	if err := c.BindJSON(&input); err != nil {
 		NewErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
 	}
 
 	id, err := h.services.Authorization.CreateUser(input)
